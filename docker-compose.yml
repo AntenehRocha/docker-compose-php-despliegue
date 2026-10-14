@@ -1,6 +1,20 @@
+version: '3.8'
+
 services:
+  web:
+    build: .
+    container_name: mi_servidor_php
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+    restart: always
+    depends_on:
+      - mongo
+
   mongo:
     image: mongo
+    container_name: mi_base_datos_mongo
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -8,11 +22,14 @@ services:
 
   mongo-express:
     image: mongo-express
+    container_name: mi_mongo_express
     restart: always
     ports:
-      - 8081:8081
+      - "8081:8081"
     environment:
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
-      ME_CONFIG_BASICAUTH_ENABLED: true
+      ME_CONFIG_BASICAUTH_ENABLED: "true"
       ME_CONFIG_BASICAUTH_USERNAME: mongoexpressuser
       ME_CONFIG_BASICAUTH_PASSWORD: mongoexpresspass
+    depends_on:
+      - mongo
